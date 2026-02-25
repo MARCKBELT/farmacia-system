@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Stock {
+  id                Int      @id @default(autoincrement())
+  productId         Int      @map("product_id")
+  productSku        String   @map("product_sku")
+  productName       String   @map("product_name")
+  batchNumber       String   @map("batch_number")
+  expirationDate    DateTime @map("expiration_date")
+  quantity          Int
+  initialQuantity   Int      @map("initial_quantity")
+  warehouseLocation String?  @map("warehouse_location")
+  costPrice         Decimal  @map("cost_price") @db.Decimal(10, 2)
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  movements StockMovement[]
+
+  @@index([productId])
+  @@index([expirationDate])
+  @@index([batchNumber])
+  @@map("stock")
+}
+
+enum MovementType {
+  ENTRADA
+  SALIDA
+  AJUSTE_POSITIVO
+  AJUSTE_NEGATIVO
+  VENCIMIENTO
+  DEVOLUCION
+}
+
+model StockMovement {
+  id             Int          @id @default(autoincrement())
+  stockId        Int          @map("stock_id")
+  productId      Int          @map("product_id")
+  type           MovementType
+  quantity       Int
+  quantityBefore Int          @map("quantity_before")
+  quantityAfter  Int          @map("quantity_after")
+  reason         String?
+  reference      String?
+  userId         String?      @map("user_id")
+  userName       String?      @map("user_name")
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  stock Stock @relation(fields: [stockId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("stock_movements")
+}
+
+model StockAlert {
+  id          Int      @id @default(autoincrement())
+  productId   Int      @map("product_id")
+  productName String   @map("product_name")
+  alertType   String   @map("alert_type")
+  message     String
+  severity    String
+  isRead      Boolean  @default(false) @map("is_read")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([productId])
+  @@index([alertType])
+  @@index([isRead])
+  @@map("stock_alerts")
+}

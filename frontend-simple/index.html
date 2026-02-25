@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmacia System - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen">
+    <!-- Login Page -->
+    <div id="loginPage" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-blue-600">🏥 Farmacia System</h1>
+                <p class="text-gray-600 mt-2">Inicia sesión para continuar</p>
+            </div>
+
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="admin@farmacia.com"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="••••••••"
+                        required
+                    />
+                </div>
+
+                <div id="errorMessage" class="hidden bg-red-50 text-red-600 p-3 rounded-md text-sm"></div>
+
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                >
+                    Iniciar Sesión
+                </button>
+            </form>
+
+            <div class="mt-6 pt-6 border-t">
+                <p class="text-sm text-gray-600 text-center">Usuarios de prueba:</p>
+                <div class="mt-2 space-y-1 text-xs text-gray-500">
+                    <p>👨‍💼 Admin: admin@farmacia.com / Admin123!</p>
+                    <p>👤 Vendedor: vendedor@farmacia.com / Vendedor123!</p>
+                    <p>💰 Cajero: cajero@farmacia.com / Cajero123!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" class="hidden min-h-screen flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-900 text-white">
+            <div class="p-6 border-b border-gray-800">
+                <h1 class="text-2xl font-bold">🏥 Farmacia</h1>
+                <p class="text-sm text-gray-400 mt-1" id="userName"></p>
+                <p class="text-xs text-gray-500" id="userRole"></p>
+            </div>
+
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white">
+                            📊 Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800">
+                            🛒 Punto de Venta
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800">
+                            📦 Productos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800">
+                            ⚠️ Inventario
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800">
+                            👥 Clientes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800">
+                            📄 Ventas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="absolute bottom-0 w-64 p-4 border-t border-gray-800">
+                <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 w-full">
+                    🚪 Cerrar Sesión
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8 bg-gray-50">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="statsContainer">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Ingresos Totales</p>
+                            <p class="text-2xl font-bold text-gray-900 mt-2" id="totalRevenue">Bs. 0.00</p>
+                        </div>
+                        <div class="p-3 rounded-full bg-green-50">
+                            <span class="text-2xl">💰</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Ventas</p>
+                            <p class="text-2xl font-bold text-gray-900 mt-2" id="totalSales">0</p>
+                        </div>
+                        <div class="p-3 rounded-full bg-blue-50">
+                            <span class="text-2xl">📈</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Productos Bajo Stock</p>
+                            <p class="text-2xl font-bold text-gray-900 mt-2" id="lowStock">0</p>
+                        </div>
+                        <div class="p-3 rounded-full bg-orange-50">
+                            <span class="text-2xl">⚠️</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Próximos a Vencer</p>
+                            <p class="text-2xl font-bold text-gray-900 mt-2" id="expiring">0</p>
+                        </div>
+                        <div class="p-3 rounded-full bg-red-50">
+                            <span class="text-2xl">📦</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE = {
+            auth: 'http://localhost:4000',
+            sales: 'http://localhost:4007',
+            inventory: 'http://localhost:4006'
+        };
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+            
+            try {
+                const response = await fetch(`${API_BASE.auth}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Credenciales incorrectas');
+                }
+
+                const data = await response.json();
+                
+                // Guardar token y usuario
+                localStorage.setItem('token', data.accessToken);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                
+                // Mostrar dashboard
+                showDashboard(data.user);
+                
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+            }
+        });
+
+        // Mostrar Dashboard
+        async function showDashboard(user) {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('dashboardPage').classList.remove('hidden');
+            
+            document.getElementById('userName').textContent = user.fullName;
+            document.getElementById('userRole').textContent = user.role;
+            
+            // Cargar estadísticas
+            await loadStats();
+        }
+
+        // Cargar estadísticas
+        async function loadStats() {
+            try {
+                const token = localStorage.getItem('token');
+                
+                const [salesRes, lowStockRes, expiringRes] = await Promise.all([
+                    fetch(`${API_BASE.sales}/sales/statistics`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    }),
+                    fetch(`${API_BASE.inventory}/stock/low-stock`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    }),
+                    fetch(`${API_BASE.inventory}/stock/expiring-soon`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    })
+                ]);
+
+                const salesData = await salesRes.json();
+                const lowStockData = await lowStockRes.json();
+                const expiringData = await expiringRes.json();
+
+                document.getElementById('totalRevenue').textContent = 
+                    `Bs. ${salesData.totalRevenue?.toFixed(2) || '0.00'}`;
+                document.getElementById('totalSales').textContent = salesData.totalSales || 0;
+                document.getElementById('lowStock').textContent = lowStockData.length || 0;
+                document.getElementById('expiring').textContent = expiringData.length || 0;
+                
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            document.getElementById('dashboardPage').classList.add('hidden');
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Check if already logged in
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            if (token && user) {
+                showDashboard(JSON.parse(user));
+            }
+        });
+    </script>
+</body>
+</html>

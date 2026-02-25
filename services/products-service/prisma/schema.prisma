@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Laboratory {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  contactInfo Json?     @map("contact_info")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  products    Product[]
+
+  @@map("laboratories")
+}
+
+model Product {
+  id               Int      @id @default(autoincrement())
+  sku              String   @unique
+  barcode          String?  @unique
+  name             String
+  description      String?
+  laboratoryId     Int?     @map("laboratory_id")
+  category         String?
+  isControlled     Boolean  @default(false) @map("is_controlled")
+  activeIngredient String?  @map("active_ingredient")
+  unitType         String?  @map("unit_type")
+  minStock         Int      @default(10) @map("min_stock")
+  pricePurchase    Decimal  @map("price_purchase") @db.Decimal(10, 2)
+  priceSale        Decimal  @map("price_sale") @db.Decimal(10, 2)
+  taxRate          Decimal  @default(0) @map("tax_rate") @db.Decimal(5, 2)
+  imageUrl         String?  @map("image_url")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  laboratory Laboratory? @relation(fields: [laboratoryId], references: [id])
+  stock      Stock[]
+
+  @@index([name])
+  @@index([barcode])
+  @@index([laboratoryId])
+  @@map("products")
+}
+
+model Stock {
+  id                Int      @id @default(autoincrement())
+  productId         Int      @map("product_id")
+  batchNumber       String   @map("batch_number")
+  expirationDate    DateTime @map("expiration_date")
+  quantity          Int
+  warehouseLocation String?  @map("warehouse_location")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([expirationDate])
+  @@index([productId, quantity])
+  @@map("stock")
+}
